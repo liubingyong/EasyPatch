@@ -8,9 +8,4 @@ public class MainCanvasInjections : MonoBehaviour {
     public Text txt1;
     [Component("./Text (1)")]
     public Text txt2;
-
-    void Reset()
-    {
-        this.LoadComponents();
-    }
 }
