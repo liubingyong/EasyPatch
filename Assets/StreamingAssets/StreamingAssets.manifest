@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 2979150293
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: easypatchassets.unity3d
+      Dependencies: {}

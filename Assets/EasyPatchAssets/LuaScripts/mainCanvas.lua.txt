@@ -1,0 +1,10 @@
+local injections
+
+function start()
+    print("lua start...")
+
+    injections = self:GetComponent("MainCanvasInjections")
+
+    injections.txt1.text = "C"
+    injections.txt2.text = "F1"
+end
