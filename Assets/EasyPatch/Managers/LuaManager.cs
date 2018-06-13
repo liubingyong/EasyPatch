@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using XLua;
-using Pattern;
+using Basis.Pattern;
 
 namespace EasyPatch
 {

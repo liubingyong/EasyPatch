@@ -122,14 +122,12 @@ public static class CAExtensions {
             } else {
                 GameObject gObj;
 
-                if (attribute.GameObject.StartsWith("./")) {
-                    var path = attribute.GameObject.Substring(2, attribute.GameObject.Length - 2);
-                    var gTrans = behaviour.transform.Find(path);
-                    gObj = gTrans == null ? null : gTrans.gameObject;
+                if (attribute.GameObject.StartsWith("/")) {
+                    gObj = GameObject.Find(attribute.GameObject);
                 } else
                 {
-                    var path = attribute.GameObject.StartsWith("/") ? attribute.GameObject : "/" + attribute.GameObject;
-                    gObj = GameObject.Find(path);
+                    var gTrans = behaviour.transform.Find(attribute.GameObject);
+                    gObj = gTrans == null ? null : gTrans.gameObject;
                 }
 
                 if ( gObj != null ) {

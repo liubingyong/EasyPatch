@@ -34,3 +34,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Assets/XLua/Gen.meta
+Assets/XLua/Gen/

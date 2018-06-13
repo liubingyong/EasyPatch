@@ -5,6 +5,6 @@ function start()
 
     injections = self:GetComponent("MainCanvasInjections")
 
-    injections.txt1.text = "C"
-    injections.txt2.text = "F1"
+    injections.txt1.text = "Hello"
+    injections.txt2.text = "World"
 end

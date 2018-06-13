@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UObject = UnityEngine.Object;
-using Pattern;
+using Basis.Pattern;
 using XLua;
 
 namespace EasyPatch {
@@ -74,7 +74,7 @@ namespace EasyPatch {
             {
                 byte[] stream = null;
                 string uri = Util.DataPath + abname;
-                Debug.LogWarning("LoadFile::>> " + uri);
+                Debug.Log("LoadFile::>> " + uri);
                 LoadDependencies(abname);
 
                 stream = File.ReadAllBytes(uri);

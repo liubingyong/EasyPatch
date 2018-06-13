@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using UnityEngine;
-using Pattern;
+using Basis;
+using Basis.Pattern;
+using U3D.Threading;
 
 public class ThreadEvent
 {
@@ -27,12 +29,6 @@ public class NotiData
 
 public class NotiConst
 {
-    /// <summary>
-    /// Controller层消息通知
-    /// </summary>
-    public const string START_UP = "StartUp";                       //启动框架
-    public const string DISPATCH_MESSAGE = "DispatchMessage";       //派发信息
-
     /// <summary>
     /// View层消息通知
     /// </summary>
@@ -85,8 +81,11 @@ public class ThreadManager : Singleton<ThreadManager>
     /// <param name="state"></param>
     private void OnSyncEvent(NotiData data)
     {
-        if (this.func != null) func(data);  //回调逻辑层
-        //facade.SendMessageCommand(data.evName, data.evParam); //通知View层
+        if (this.func != null) func(data);              //回调逻辑层
+
+        Dispatcher.instance.ToMainThread(() => {
+            Messenger.Broadcast(data.evName, data.evParam); //通知View层
+        });
     }
 
     // Update is called once per frame
@@ -143,8 +142,9 @@ public class ThreadManager : Singleton<ThreadManager>
 
     private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
-        //UnityEngine.Debug.Log(e.TotalBytesToReceive);
-        //UnityEngine.Debug.Log(e.ProgressPercentage);
+        UnityEngine.Debug.Log(e.BytesReceived);
+        UnityEngine.Debug.Log(e.TotalBytesToReceive);
+        UnityEngine.Debug.Log(e.ProgressPercentage);
         /*
         UnityEngine.Debug.Log(string.Format("{0} MB's / {1} MB's",
             (e.BytesReceived / 1024d / 1024d).ToString("0.00"),

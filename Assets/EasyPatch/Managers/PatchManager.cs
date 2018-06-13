@@ -1,9 +1,10 @@
-﻿using Pattern;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Basis;
+using Basis.Pattern;
 
 namespace EasyPatch
 {
@@ -30,6 +31,8 @@ namespace EasyPatch
             CheckExtractResource(); //释放资源
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Application.targetFrameRate = AppConst.GameFrameRate;
+
+            Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, "init");
         }
 
         /// <summary>
@@ -60,8 +63,8 @@ namespace EasyPatch
             if (File.Exists(outfile)) File.Delete(outfile);
 
             string message = "正在解包文件:>files.txt";
-            Debug.Log(infile);
-            Debug.Log(outfile);
+            Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, message);
+
             if (Application.platform == RuntimePlatform.Android)
             {
                 WWW www = new WWW(infile);
@@ -85,8 +88,7 @@ namespace EasyPatch
                 outfile = dataPath + fs[0];
 
                 message = "正在解包文件:>" + fs[0];
-                Debug.Log("正在解包文件:>" + infile);
-                //facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
+                Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, message);
 
                 string dir = Path.GetDirectoryName(outfile);
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -113,7 +115,7 @@ namespace EasyPatch
                 yield return new WaitForEndOfFrame();
             }
             message = "解包完成!!!";
-            //facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
+            Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, message);
             yield return new WaitForSeconds(0.1f);
 
             message = string.Empty;
@@ -175,8 +177,7 @@ namespace EasyPatch
                 if (canUpdate)
                 {   //本地缺少文件
                     message = "downloading>>" + fileUrl;
-                    Debug.Log(message);
-                    //facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
+                    Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, message);
                     /*
                     www = new WWW(fileUrl); yield return www;
                     if (www.error != null) {
@@ -193,7 +194,7 @@ namespace EasyPatch
             yield return new WaitForEndOfFrame();
 
             message = "更新完成!!";
-            //facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
+            Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, message);
 
             OnResourceInited();
         }
@@ -201,7 +202,7 @@ namespace EasyPatch
         void OnUpdateFailed(string file)
         {
             string message = "更新失败!>" + file;
-            //facade.SendMessageCommand(NotiConst.UPDATE_MESSAGE, message);
+            Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, message);
         }
 
         /// <summary>
@@ -269,7 +270,6 @@ namespace EasyPatch
 
             initialize = true;
         }
-
 
         /// <summary>
         /// 析构函数
