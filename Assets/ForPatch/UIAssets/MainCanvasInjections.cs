@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MainCanvasInjections : MonoBehaviour {
-    [Component("./Text")]
+    [Component("Text")]
     public Text txt1;
-    [Component("./Text (1)")]
+    [Component("Text (1)")]
     public Text txt2;
 }

@@ -1,0 +1,14 @@
+local injections
+
+function start()
+    print("lua start...")
+
+    injections = self:GetComponent("TestCanvasInjections")
+
+    injections.mLoopListView:InitListView(200, function(listView, index)
+        print('i am lua callback')
+        print(index)
+
+        return listView:NewListViewItem("ItemPrefab1");
+    end)
+end
