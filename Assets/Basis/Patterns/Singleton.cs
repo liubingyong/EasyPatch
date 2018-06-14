@@ -6,20 +6,22 @@ namespace Basis.Pattern
 
     public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
-
         private static T _instance = null;
+#if !UNITY_EDITOR
         private static bool applicationIsQuitting = false;
-
+#endif
 
         public static T Instance
         {
             get
             {
+#if !UNITY_EDITOR
                 if (applicationIsQuitting)
                 {
                     //Debug.Log(typeof(T) + " [Mog.Singleton] is already destroyed. Returning null. Please check HasInstance first before accessing instance in destructor.");
                     return null;
                 }
+#endif
                 if (_instance == null)
                 {
                     _instance = GameObject.FindObjectOfType(typeof(T)) as T;
@@ -69,14 +71,18 @@ namespace Basis.Pattern
         protected virtual void OnDestroy()
         {
             _instance = null;
+#if !UNITY_EDITOR
             applicationIsQuitting = true;
+#endif
             //Debug.Log(typeof(T) + " [Mog.Singleton] instance destroyed with the OnDestroy event");
         }
 
         protected virtual void OnApplicationQuit()
         {
             _instance = null;
+#if !UNITY_EDITOR
             applicationIsQuitting = true;
+#endif
             //Debug.Log(typeof(T) + " [Mog.Singleton] instance destroyed with the OnApplicationQuit event");
         }
 

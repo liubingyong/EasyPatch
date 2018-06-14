@@ -3,7 +3,7 @@ print("lua game start10010...")
 function OnInitOK()
     print("OnInitOK12...")
 
-    local name = "easypatchassets.unity3d"
+    local name = "uiassets.unity3d"
     local assetName = "MainCanvas"
 
     local prefab = CS.EasyPatch.ResourceManager.Instance:LoadAsset(name, assetName)

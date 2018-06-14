@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -61,22 +59,27 @@ namespace EasyPatch
 
             maps.Clear();
 
-            HandleLuaFile();
+            var packagerConfig = PatchManager.Instance.packagerConfig;
 
-            AddBuildMap("EasyPatchAssets" + AppConst.ExtName, "*.prefab", "Assets/EasyPatchAssets");
+            HandleLuaFile(packagerConfig.luaPaths);
 
-            string resPath = "Assets/" + AppConst.AssetDir;
+            foreach (var buildMapConfig in packagerConfig.buildMapConfigs)
+            {
+                AddBuildMap(buildMapConfig.bundleName + packagerConfig.extName, buildMapConfig.pattern, buildMapConfig.path);
+            }
+
+            string resPath = "Assets/" + packagerConfig.assetDir;
             BuildPipeline.BuildAssetBundles(resPath, maps.ToArray(), BuildAssetBundleOptions.None, target);
             BuildFileIndex();
 
-            string streamDir = Application.dataPath + "/" + AppConst.LuaTempDir;
+            string streamDir = Application.dataPath + "/" + packagerConfig.luaTempDir;
             if (Directory.Exists(streamDir)) Directory.Delete(streamDir, true);
             AssetDatabase.Refresh();
         }
 
         static void AddBuildMap(string bundleName, string pattern, string path)
         {
-            string[] files = Directory.GetFiles(path, pattern);
+            string[] files = Directory.GetFiles("Assets/" + path, pattern);
             if (files.Length == 0) return;
 
             for (int i = 0; i < files.Length; i++)
@@ -92,7 +95,7 @@ namespace EasyPatch
         /// <summary>
         /// 处理Lua文件
         /// </summary>
-        static void HandleLuaFile()
+        static void HandleLuaFile(string[] luaPathConfigs)
         {
             string resPath = AppDataPath + "/StreamingAssets/";
             string luaPath = resPath + "/lua/";
@@ -102,7 +105,12 @@ namespace EasyPatch
             {
                 Directory.CreateDirectory(luaPath);
             }
-            string[] luaPaths = { AppDataPath + "/EasyPatch/lua/" };
+            string[] luaPaths = new string[luaPathConfigs.Length];
+
+            for (int i = 0; i < luaPaths.Length; i++)
+            {
+                luaPaths[i] = string.Format("{0}/{1}", AppDataPath, luaPathConfigs[i]);
+            }
 
             for (int i = 0; i < luaPaths.Length; i++)
             {

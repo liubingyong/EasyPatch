@@ -218,7 +218,7 @@ namespace EasyPatch
         {
             get
             {
-                string game = AppConst.AppName.ToLower();
+                string game = PatchManager.Instance.packagerConfig.appName.ToLower();
                 if (Application.isMobilePlatform)
                 {
                     return Application.persistentDataPath + "/" + game + "/";
@@ -235,7 +235,7 @@ namespace EasyPatch
         public static string GetRelativePath()
         {
             if (Application.isEditor)
-                return "file://" + System.Environment.CurrentDirectory.Replace("\\", "/") + "/Assets/" + AppConst.AssetDir + "/";
+                return "file://" + System.Environment.CurrentDirectory.Replace("\\", "/") + "/Assets/" + PatchManager.Instance.packagerConfig.assetDir + "/";
             else if (Application.isMobilePlatform || Application.isConsolePlatform)
                 return "file:///" + DataPath;
             else // For standalone player.
@@ -287,7 +287,7 @@ namespace EasyPatch
                     path = Application.dataPath + "/Raw/";
                     break;
                 default:
-                    path = Application.dataPath + "/" + AppConst.AssetDir + "/";
+                    path = Application.dataPath + "/" + PatchManager.Instance.packagerConfig.assetDir + "/";
                     break;
             }
             return path;
@@ -306,74 +306,6 @@ namespace EasyPatch
         public static void LogError(string str)
         {
             Debug.LogError(str);
-        }
-
-        /// <summary>
-        /// 防止初学者不按步骤来操作
-        /// </summary>
-        /// <returns></returns>
-        public static int CheckRuntimeFile()
-        {
-            if (!Application.isEditor) return 0;
-            string streamDir = Application.dataPath + "/StreamingAssets/";
-            if (!Directory.Exists(streamDir))
-            {
-                return -1;
-            }
-            else
-            {
-                string[] files = Directory.GetFiles(streamDir);
-                if (files.Length == 0) return -1;
-
-                if (!File.Exists(streamDir + "files.txt"))
-                {
-                    return -1;
-                }
-            }
-            string sourceDir = AppConst.FrameworkRoot + "/ToLua/Source/Generate/";
-            if (!Directory.Exists(sourceDir))
-            {
-                return -2;
-            }
-            else
-            {
-                string[] files = Directory.GetFiles(sourceDir);
-                if (files.Length == 0) return -2;
-            }
-            return 0;
-        }
-
-        ///// <summary>
-        ///// 执行Lua方法
-        ///// </summary>
-        //public static object[] CallMethod(string module, string func, params object[] args)
-        //{
-        //    LuaManager luaMgr = AppFacade.Instance.GetManager<LuaManager>(ManagerName.Lua);
-        //    if (luaMgr == null) return null;
-        //    return luaMgr.CallFunction(module + "." + func, args);
-        //}
-
-        /// <summary>
-        /// 检查运行环境
-        /// </summary>
-        public static bool CheckEnvironment()
-        {
-#if UNITY_EDITOR
-            int resultId = Util.CheckRuntimeFile();
-            if (resultId == -1)
-            {
-                Debug.LogError("没有找到框架所需要的资源，单击Game菜单下Build xxx Resource生成！！");
-                EditorApplication.isPlaying = false;
-                return false;
-            }
-            else if (resultId == -2)
-            {
-                Debug.LogError("没有找到Wrap脚本缓存，单击Lua菜单下Gen Lua Wrap Files生成脚本！！");
-                EditorApplication.isPlaying = false;
-                return false;
-            }
-#endif
-            return true;
         }
     }
 }

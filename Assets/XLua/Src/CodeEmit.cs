@@ -1555,7 +1555,9 @@ namespace XLua
                     }
                 }
 
+#pragma warning disable 1717
                 Label endOfBlock = endOfBlock = il.DefineLabel();
+#pragma warning restore 1717
 
                 if (needCheckParameterType)
                 {

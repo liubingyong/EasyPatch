@@ -10,6 +10,8 @@ namespace EasyPatch
 {
     public class PatchManager : Singleton<PatchManager>
     {
+        public PackagerConfig packagerConfig;
+
         public static bool initialize = false;
         private List<string> downloadFiles = new List<string>();
 
@@ -30,7 +32,6 @@ namespace EasyPatch
 
             CheckExtractResource(); //释放资源
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            Application.targetFrameRate = AppConst.GameFrameRate;
 
             Messenger.Broadcast(NotiConst.UPDATE_MESSAGE, "init");
         }
@@ -123,18 +124,19 @@ namespace EasyPatch
             StartCoroutine(OnUpdateResource());
         }
 
+#pragma warning disable 0162
         /// <summary>
         /// 启动更新下载
         /// </summary>
         IEnumerator OnUpdateResource()
         {
-            if (!AppConst.UpdateMode)
+            if (!packagerConfig.updateMode)
             {
                 OnResourceInited();
                 yield break;
             }
             string dataPath = Util.DataPath;  //数据目录
-            string url = AppConst.WebUrl;
+            string url = packagerConfig.webUrl;
             string message = string.Empty;
             string random = DateTime.Now.ToString("yyyymmddhhmmss");
             string listUrl = url + "files.txt?v=" + random;
@@ -198,6 +200,7 @@ namespace EasyPatch
 
             OnResourceInited();
         }
+#pragma warning restore 0162
 
         void OnUpdateFailed(string file)
         {

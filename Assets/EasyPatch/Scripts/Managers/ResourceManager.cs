@@ -15,15 +15,19 @@ namespace EasyPatch {
         private AssetBundle shared, assetbundle;
         private Dictionary<string, AssetBundle> bundles;
 
+        private PackagerConfig packagerConfig;
+
         /// <summary>
         /// 初始化
         /// </summary>
         public void Initialize()
         {
+            packagerConfig = PatchManager.Instance.packagerConfig;
+
             byte[] stream = null;
             string uri = string.Empty;
             bundles = new Dictionary<string, AssetBundle>();
-            uri = Util.DataPath + AppConst.AssetDir;
+            uri = Util.DataPath + packagerConfig.assetDir;
             if (!File.Exists(uri)) return;
             stream = File.ReadAllBytes(uri);
             assetbundle = AssetBundle.LoadFromMemory(stream);
@@ -65,9 +69,9 @@ namespace EasyPatch {
         /// <returns></returns>
         public AssetBundle LoadAssetBundle(string abname)
         {
-            if (!abname.EndsWith(AppConst.ExtName))
+            if (!abname.EndsWith(packagerConfig.extName))
             {
-                abname += AppConst.ExtName;
+                abname += packagerConfig.extName;
             }
             AssetBundle bundle = null;
             if (!bundles.ContainsKey(abname))

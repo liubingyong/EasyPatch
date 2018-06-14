@@ -270,7 +270,9 @@ namespace XLua
             ERROR
         }
 
+#pragma warning disable 0414
         Type delegate_birdge_type;
+#pragma warning restore 0414
 
 #if UNITY_EDITOR || XLUA_GENERAL
         class CompareByArgRet : IEqualityComparer<MethodInfo>
