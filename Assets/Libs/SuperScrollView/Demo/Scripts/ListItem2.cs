@@ -8,7 +8,7 @@ namespace SuperScrollView
     public class ListItem2 : MonoBehaviour
     {
         public Text mNameText;
-        public Image mIcon;
+        public RawImage mIcon;
         public Image[] mStarArray;
         public Text mDescText;
         public Text mDescText2;
@@ -65,7 +65,7 @@ namespace SuperScrollView
             mNameText.text = itemData.mName;
             mDescText.text = itemData.mFileSize.ToString() + "KB";
             mDescText2.text = itemData.mDesc;
-            mIcon.sprite = ResManager.Get.GetSpriteByName(itemData.mIcon);
+            
             SetStarCount(itemData.mStarCount);
         }
 
