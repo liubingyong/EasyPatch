@@ -3,8 +3,6 @@ print("lua game start10010...")
 function OnInitOK()
     print("OnInitOK12...")
 
-    print(json.encode({ 1, 2, 3, { x = 10 } }))
-
     local name = "uiassets.unity3d"
     local assetName = "TestCanvas"
 

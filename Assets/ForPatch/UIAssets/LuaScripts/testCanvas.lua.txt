@@ -2,21 +2,81 @@ local injections
 
 json = require "libs/json"
 
+pathRoot = ""
+tokenTable = {}
+
+function awake()
+    pathRoot = CS.UnityEngine.Application.persistentDataPath .. "/NetworkAssets/";
+
+    if (not CS.System.IO.Directory.Exists(pathRoot))
+    then
+        CS.System.IO.Directory.CreateDirectory(pathRoot)
+    end
+end
+
+local function lua_event_callback(sender, e)
+    if (e.Error == nil) 
+    then
+        local file = io.open(pathRoot .. tokenTable[e.UserState].imgPath, "rb")
+        local imageData = file:read('*a')
+
+        file:close()
+
+        CS.U3D.Threading.Dispatcher.instance:ToMainThread(function()
+            print("x")
+
+            local tex2d = CS.UnityEngine.Texture2D(4, 4)
+            CS.LuaBridge.LoadDataForTexture2D(tex2d, imageData)
+
+            tokenTable[e.UserState].item.mIcon.texture = tex2d
+
+            tokenTable[e.UserState] = nil
+        end)
+    end
+end
+
+local function downloadFile(imgPath, token)
+    local url = "http://120.132.102.64:3002/upload/" .. imgPath
+
+    local webClient = CS.System.Net.WebClient()
+    webClient:DownloadFileCompleted('+', lua_event_callback)
+    webClient:DownloadFileAsync(CS.System.Uri(url), pathRoot .. imgPath, token)
+end
+
 function start()
     print("lua start...")
 
+    CS.U3D.Threading.Dispatcher.Initialize();
+
+    print(pathRoot)
+
     injections = self:GetComponent("TestCanvasInjections")
 
-    -- local rawRes = '{"errorCode":0,"list":[{"id":18,"name":"恐龙布朗熊","tagType":0,"config":"{\"length\":3,\"dollType\":[0,1,2]}","image":"2260b14cf0f249251f1f39b577cce707d5a47844.jpg","detailImage":"6799eca903c3ca40cb4a3f40aca79d13485bbe23.jpg","topImage":null,"machineType":0,"needDiamond":30,"bottomImage":"","wallpaperImage":"58d4b506eef686c96f6c52ba3c39e2be37276234.jpg","priority":1,"remain":140,"needCoins":29,"resLink_android":"b0add956cd7b90e88fe743621ecb000b908b0578.bin","resLink_ios":"b4e995ee23dda385595d9e963c5b0684d271fc4d.bin","canExchangeGold":80,"isShowOnMain":1},{"id":19,"name":"长劲鹿布朗熊","tagType":0,"config":null,"image":"a14e434642d8165afb987a3c9f31497f4d134fef.jpg","detailImage":"28b3cbcec25d1e65029cf7c8011d921e7c991181.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":"","priority":2,"remain":652,"needCoins":30,"resLink_android":"b16091276236beb105b8c04a6aa23d56eb7be79c.bin","resLink_ios":"d2e9d76def40ef04b8b609dce5b470adb0ec22df.bin","canExchangeGold":80,"isShowOnMain":1},{"id":17,"name":"猪猪布朗熊","tagType":2,"config":"{\"useCoverMask\":true,\"floorEffect\":1,\"seriesId\":5}","image":"b4b3d8c266600e3f1747fee57584175266fff340.jpg","detailImage":"33462a92f4f337f8a21200fc54307dd644a03453.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":null,"priority":3,"remain":363,"needCoins":29,"resLink_android":"d055d4cc1ad5dc136f7ebacb8f35ee8a9d7010e4.bin","resLink_ios":"b4e995ee23dda385595d9e963c5b0684d271fc4d.bin","canExchangeGold":60,"isShowOnMain":1},{"id":26,"name":"哈哈扭蛋机","tagType":0,"config":null,"image":"9e11685217eac868537a5776724be92fbf46dc20.jpg","detailImage":"b02457f7b53b4806bf7aec71fc840614ef6f6bf3.jpg","topImage":null,"machineType":1,"needDiamond":42,"bottomImage":null,"wallpaperImage":null,"priority":3,"remain":200,"needCoins":0,"resLink_android":null,"resLink_ios":null,"canExchangeGold":0,"isShowOnMain":1},{"id":29,"name":"时尚夜灯扭蛋","tagType":0,"config":null,"image":"e2394a13f4731377d957afa6317fa2a26fb77706.jpg","detailImage":null,"topImage":null,"machineType":1,"needDiamond":40,"bottomImage":null,"wallpaperImage":null,"priority":3,"remain":1,"needCoins":1,"resLink_android":null,"resLink_ios":null,"canExchangeGold":1,"isShowOnMain":1},{"id":9,"name":"酸溜溜的汤姆猫","tagType":0,"config":null,"image":"48207ca5896209e68538a2a6dad8b4669dd5ef88.jpg","detailImage":"71b4c2714196e13e7e28d0bab5954ded7125e933.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":null,"priority":4,"remain":394,"needCoins":19,"resLink_android":"1d2c668adff63f2c59228fa5b2c6515f156ca8b7.bin","resLink_ios":"001cd677939331e72db397cca7e77d84da8c6304.bin","canExchangeGold":20,"isShowOnMain":1},{"id":22,"name":"微笑叮当猫","tagType":1,"config":"{\"length\":5,\"dollType\":[0,1,2,3,4],\"floorEffect\":1}","image":"02b8454e31cffaebca2af458cc07da0554874cf4.jpg","detailImage":"9859a17da13f8bd97fde4669256a294e0aa1f944.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":"a566776b0f203cba3b7e98ff74807cd93500df00.png","wallpaperImage":"b4cdce73d56837d6ed214103448a2c580306a912.jpg","priority":4,"remain":627,"needCoins":25,"resLink_android":"65069252a140c4c82861f5fad6504a4c4107e74f.bin","resLink_ios":"cc98a476c7c48258a9ced41895cf3caa4f2c7daf.bin","canExchangeGold":40,"isShowOnMain":1},{"id":8,"name":"星座辛巴狗","tagType":0,"config":"{\"useCoverMask\":true,\"floorEffect\":1,\"url\":\"https://www.baidu.com\"}","image":"d2c3320109ab460aaf4058ec3092dea8fd04ea71.jpg","detailImage":"4b382c206335675bfac87f6b1573d314d334cd2b.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":"a68122fa2585ffff7f73b81e8b3672685f88a398.png","wallpaperImage":null,"priority":5,"remain":83,"needCoins":20,"resLink_android":"07a35628e1fa52900e995f90ab4ce29b46fc5f59.bin","resLink_ios":"03728c61d5746dedf83fb2f2ab374362be9e7e29.bin","canExchangeGold":15,"isShowOnMain":1},{"id":11,"name":"玻尿酸鸭","tagType":0,"config":null,"image":"75b4c3c609a8e87c055580ee3f97560bb1384df2.jpg","detailImage":"5c4baf97764add059d7afb161a81423aa092b6a2.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":"4b9dc433332ee85fc5dab10a1ced2dbfa0824749.jpg","priority":6,"remain":262,"needCoins":29,"resLink_android":"9e7771556b09856be07f44ce43507cc3eb9c1e28.bin","resLink_ios":"6a962c2596e983eacc2b1cf1a276f11a1bbc1303.bin","canExchangeGold":50,"isShowOnMain":1},{"id":13,"name":"精灵皮卡丘扭蛋","tagType":0,"config":null,"image":"6908a8759ca491e2283efeda3af3f344e04a789d.jpg","detailImage":"b40749e058434c86626cf0e64addad8f399472f9.jpg","topImage":null,"machineType":1,"needDiamond":45,"bottomImage":null,"wallpaperImage":null,"priority":6,"remain":344,"needCoins":19,"resLink_android":"925ad697c86d8c88c5373c5b020b704d340ea8cc.bin","resLink_ios":"41075437c202326a04d2a2799fc55a35a7774171.bin","canExchangeGold":50,"isShowOnMain":1}]}'
-
-    local rawRes = '{"config":"{\\\"length\\\":3,\\\"dollType\\\":[0,1,2]}"}'
+    local rawRes = '{"errorCode":0,"list":[{"id":18,"name":"恐龙布朗熊","tagType":0,"config":"{\\\"length\\\":3,\\\"dollType\\\":[0,1,2]}","image":"2260b14cf0f249251f1f39b577cce707d5a47844.jpg","detailImage":"6799eca903c3ca40cb4a3f40aca79d13485bbe23.jpg","topImage":null,"machineType":0,"needDiamond":30,"bottomImage":"","wallpaperImage":"58d4b506eef686c96f6c52ba3c39e2be37276234.jpg","priority":1,"remain":140,"needCoins":29,"resLink_android":"b0add956cd7b90e88fe743621ecb000b908b0578.bin","resLink_ios":"b4e995ee23dda385595d9e963c5b0684d271fc4d.bin","canExchangeGold":80,"isShowOnMain":1},{"id":19,"name":"长劲鹿布朗熊","tagType":0,"config":null,"image":"a14e434642d8165afb987a3c9f31497f4d134fef.jpg","detailImage":"28b3cbcec25d1e65029cf7c8011d921e7c991181.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":"","priority":2,"remain":652,"needCoins":30,"resLink_android":"b16091276236beb105b8c04a6aa23d56eb7be79c.bin","resLink_ios":"d2e9d76def40ef04b8b609dce5b470adb0ec22df.bin","canExchangeGold":80,"isShowOnMain":1},{"id":17,"name":"猪猪布朗熊","tagType":2,"config":"{\\\"useCoverMask\\\":true,\\\"floorEffect\\\":1,\\\"seriesId\\\":5}","image":"b4b3d8c266600e3f1747fee57584175266fff340.jpg","detailImage":"33462a92f4f337f8a21200fc54307dd644a03453.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":null,"priority":3,"remain":363,"needCoins":29,"resLink_android":"d055d4cc1ad5dc136f7ebacb8f35ee8a9d7010e4.bin","resLink_ios":"b4e995ee23dda385595d9e963c5b0684d271fc4d.bin","canExchangeGold":60,"isShowOnMain":1},{"id":26,"name":"哈哈扭蛋机","tagType":0,"config":null,"image":"9e11685217eac868537a5776724be92fbf46dc20.jpg","detailImage":"b02457f7b53b4806bf7aec71fc840614ef6f6bf3.jpg","topImage":null,"machineType":1,"needDiamond":42,"bottomImage":null,"wallpaperImage":null,"priority":3,"remain":200,"needCoins":0,"resLink_android":null,"resLink_ios":null,"canExchangeGold":0,"isShowOnMain":1},{"id":29,"name":"时尚夜灯扭蛋","tagType":0,"config":null,"image":"e2394a13f4731377d957afa6317fa2a26fb77706.jpg","detailImage":null,"topImage":null,"machineType":1,"needDiamond":40,"bottomImage":null,"wallpaperImage":null,"priority":3,"remain":1,"needCoins":1,"resLink_android":null,"resLink_ios":null,"canExchangeGold":1,"isShowOnMain":1},{"id":9,"name":"酸溜溜的汤姆猫","tagType":0,"config":null,"image":"48207ca5896209e68538a2a6dad8b4669dd5ef88.jpg","detailImage":"71b4c2714196e13e7e28d0bab5954ded7125e933.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":null,"priority":4,"remain":394,"needCoins":19,"resLink_android":"1d2c668adff63f2c59228fa5b2c6515f156ca8b7.bin","resLink_ios":"001cd677939331e72db397cca7e77d84da8c6304.bin","canExchangeGold":20,"isShowOnMain":1},{"id":22,"name":"微笑叮当猫","tagType":1,"config":"{\\\"length\\\":5,\\\"dollType\\\":[0,1,2,3,4],\\\"floorEffect\\\":1}","image":"02b8454e31cffaebca2af458cc07da0554874cf4.jpg","detailImage":"9859a17da13f8bd97fde4669256a294e0aa1f944.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":"a566776b0f203cba3b7e98ff74807cd93500df00.png","wallpaperImage":"b4cdce73d56837d6ed214103448a2c580306a912.jpg","priority":4,"remain":627,"needCoins":25,"resLink_android":"65069252a140c4c82861f5fad6504a4c4107e74f.bin","resLink_ios":"cc98a476c7c48258a9ced41895cf3caa4f2c7daf.bin","canExchangeGold":40,"isShowOnMain":1},{"id":8,"name":"星座辛巴狗","tagType":0,"config":"{\\\"useCoverMask\\\":true,\\\"floorEffect\\\":1,\\\"url\\\":\\\"https://www.baidu.com\\\"}","image":"d2c3320109ab460aaf4058ec3092dea8fd04ea71.jpg","detailImage":"4b382c206335675bfac87f6b1573d314d334cd2b.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":"a68122fa2585ffff7f73b81e8b3672685f88a398.png","wallpaperImage":null,"priority":5,"remain":83,"needCoins":20,"resLink_android":"07a35628e1fa52900e995f90ab4ce29b46fc5f59.bin","resLink_ios":"03728c61d5746dedf83fb2f2ab374362be9e7e29.bin","canExchangeGold":15,"isShowOnMain":1},{"id":11,"name":"玻尿酸鸭","tagType":0,"config":null,"image":"75b4c3c609a8e87c055580ee3f97560bb1384df2.jpg","detailImage":"5c4baf97764add059d7afb161a81423aa092b6a2.jpg","topImage":null,"machineType":0,"needDiamond":0,"bottomImage":null,"wallpaperImage":"4b9dc433332ee85fc5dab10a1ced2dbfa0824749.jpg","priority":6,"remain":262,"needCoins":29,"resLink_android":"9e7771556b09856be07f44ce43507cc3eb9c1e28.bin","resLink_ios":"6a962c2596e983eacc2b1cf1a276f11a1bbc1303.bin","canExchangeGold":50,"isShowOnMain":1},{"id":13,"name":"精灵皮卡丘扭蛋","tagType":0,"config":null,"image":"6908a8759ca491e2283efeda3af3f344e04a789d.jpg","detailImage":"b40749e058434c86626cf0e64addad8f399472f9.jpg","topImage":null,"machineType":1,"needDiamond":45,"bottomImage":null,"wallpaperImage":null,"priority":6,"remain":344,"needCoins":19,"resLink_android":"925ad697c86d8c88c5373c5b020b704d340ea8cc.bin","resLink_ios":"41075437c202326a04d2a2799fc55a35a7774171.bin","canExchangeGold":50,"isShowOnMain":1}]}'
     local res = json.decode(rawRes)
 
-    injections.mLoopListView:InitListView(200, function(listView, index)
+    injections.mLoopListView:InitListView(#res.list, function(listView, index)
         local item = listView:NewListViewItem("ItemPrefab1")
         local itemScript = item:GetComponent("ListItem2")
 
         itemScript.mNameText.text = "T" .. index
+
+        tokenTable[index + 1] = { imgPath = res.list[index + 1].image, item = itemScript }
+
+        local file = io.open(pathRoot .. tokenTable[index + 1].imgPath, "rb")
+
+        if file ~= nil
+        then
+            local imageData = file:read('*a')
+            file:close()
+
+            local tex2d = CS.UnityEngine.Texture2D(4, 4)
+            CS.LuaBridge.LoadDataForTexture2D(tex2d, imageData)
+
+            itemScript.mIcon.texture = tex2d
+        else
+            downloadFile(tokenTable[index + 1].imgPath, index + 1)
+        end
 
         return item
     end)
