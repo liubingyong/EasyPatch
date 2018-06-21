@@ -17,6 +17,7 @@ public class UIPatch : MonoBehaviour
     void Awake()
     {
         Dispatcher.Initialize();
+        DollService.Instance.Init();
 
         Messenger.AddListener<string>(NotiConst.UPDATE_MESSAGE, msg =>
         {

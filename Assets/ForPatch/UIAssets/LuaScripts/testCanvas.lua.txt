@@ -48,6 +48,15 @@ function start()
 
     CS.U3D.Threading.Dispatcher.Initialize();
 
+    CS.DollService.Instance:SendRequest("/login", "{\"userId\":10000563,\"password\":\"a4661eae712a1b1035d90f70f0f967fa1bf30561\"}",
+        function(res)
+            print(res)
+        end,
+        function(errcode)
+            print(errcode)
+        end);
+
+
     print(pathRoot)
 
     injections = self:GetComponent("TestCanvasInjections")
