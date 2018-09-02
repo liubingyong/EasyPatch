@@ -10,6 +10,8 @@ namespace EasyPatch {
     [LuaCallCSharp]
     public class ResourceManager : Singleton<ResourceManager>
     {
+        public GameObject[] editorInjections;
+
         private string[] m_Variants = { };
         private AssetBundleManifest manifest;
         private AssetBundle shared, assetbundle;
@@ -46,6 +48,22 @@ namespace EasyPatch {
 
         public UObject LoadAsset(string abname, string assetname)
         {
+#if UNITY_EDITOR
+            UObject editorInjection = null;
+
+            foreach (var injection in editorInjections)
+            {
+                if (injection.name == assetname)
+                {
+                    editorInjection = injection;
+                    break;
+                }
+            }
+
+            if (editorInjection != null)
+                return editorInjection;
+#endif
+
             abname = abname.ToLower();
             AssetBundle bundle = LoadAssetBundle(abname);
             return bundle.LoadAsset(assetname);

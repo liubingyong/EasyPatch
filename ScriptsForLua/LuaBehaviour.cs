@@ -14,12 +14,20 @@ using System;
 
 namespace EasyPatch
 {
+    [System.Serializable]
+    public class Injection
+    {
+        public string name;
+        public GameObject value;
+    }
+
     [LuaCallCSharp]
     public class LuaBehaviour : MonoBehaviour
     {
-        public TextAsset luaScript;
+        public string luaScript;
+        public Injection[] injections;
 
-        internal LuaEnv luaEnv = LuaManager.luaEnv;
+        internal LuaEnv luaEnv = LuaManager.luaEnv; //all lua behaviour shared one luaenv only!
         internal static float lastGCTime = 0;
         internal const float GCInterval = 1;//1 second 
 
@@ -39,8 +47,12 @@ namespace EasyPatch
             meta.Dispose();
 
             scriptEnv.Set("self", this);
+            foreach (var injection in injections)
+            {
+                scriptEnv.Set(injection.name, injection.value);
+            }
 
-            luaEnv.DoString(luaScript.text, "LuaBehaviour", scriptEnv);
+            luaEnv.DoString(luaScript, "LuaBehaviour", scriptEnv);
 
             Action luaAwake = scriptEnv.Get<Action>("awake");
             scriptEnv.Get("start", out luaStart);
@@ -86,6 +98,7 @@ namespace EasyPatch
             luaUpdate = null;
             luaStart = null;
             scriptEnv.Dispose();
+            injections = null;
         }
     }
 }
