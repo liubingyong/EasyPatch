@@ -24,7 +24,7 @@ namespace EasyPatch
     [LuaCallCSharp]
     public class LuaBehaviour : MonoBehaviour
     {
-        public string luaScript;
+        public TextAsset luaScript;
         public Injection[] injections;
 
         internal LuaEnv luaEnv = LuaManager.luaEnv; //all lua behaviour shared one luaenv only!
@@ -52,7 +52,7 @@ namespace EasyPatch
                 scriptEnv.Set(injection.name, injection.value);
             }
 
-            luaEnv.DoString(luaScript, "LuaBehaviour", scriptEnv);
+            luaEnv.DoString(luaScript.text, "LuaBehaviour", scriptEnv);
 
             Action luaAwake = scriptEnv.Get<Action>("awake");
             scriptEnv.Get("start", out luaStart);
