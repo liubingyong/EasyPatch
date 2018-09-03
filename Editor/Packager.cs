@@ -22,22 +22,16 @@ namespace EasyPatch
             return false;
         }
 
-        [MenuItem("EasyPatch/Build iPhone Resource", false, 100)]
+        [MenuItem("EasyPatch/Build Resource", false, 100)]
         public static void BuildiPhoneResource()
         {
-            BuildAssetResource(BuildTarget.iOS);
-        }
-
-        [MenuItem("EasyPatch/Build Android Resource", false, 101)]
-        public static void BuildAndroidResource()
-        {
+#if UNITY_ANDROID
             BuildAssetResource(BuildTarget.Android);
-        }
-
-        [MenuItem("EasyPatch/Build Windows Resource", false, 102)]
-        public static void BuildWindowsResource()
-        {
+#elif UNITY_IOS
+            BuildAssetResource(BuildTarget.iOS);
+#else
             BuildAssetResource(BuildTarget.StandaloneWindows);
+#endif
         }
 
         /// <summary>
